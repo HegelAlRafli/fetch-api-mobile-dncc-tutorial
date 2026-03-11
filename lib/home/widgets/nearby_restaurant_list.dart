@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:learn_fetch_api_dncc/core/services/api_services.dart';
+import 'package:learn_fetch_api_dncc/home/model/restaurants_model.dart';
 import '../../core/theme/color_value.dart';
 import 'restaurant_card.dart';
 
@@ -43,26 +45,38 @@ class _NearbyRestaurantListWidgetState
             ],
           ),
         ),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.fromLTRB(30, 16, 14, 30),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            childAspectRatio: (150 / 202),
-            crossAxisCount: 2,
-            mainAxisSpacing: 16,
-          ),
-          itemCount: 4,
-          itemBuilder: (context, index) {
-            // final restaurant = state.model.restaurants[index];
-            return RestaurantCard(
-              id: 'ddjan',
-              pictureId:
-                  'https://blog.thewonderspace.com/wp-content/uploads/2025/06/Fast-Food-Restaurant-Restoran-Cepat-Saji-1024x683.jpg',
-              name: 'MCS',
-              city: 'Semarang',
-              rating: '5.5',
-              description: 'ipsum lorem damet ngiemet',
+        FutureBuilder<RestaurantModel>(
+          future: ApiServices.fetchRestaurant(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(child: Text(snapshot.error.toString()));
+            }
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.fromLTRB(30, 16, 14, 30),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                childAspectRatio: (150 / 202),
+                crossAxisCount: 2,
+                mainAxisSpacing: 16,
+              ),
+              itemCount: snapshot.data!.restaurants!.length,
+              itemBuilder: (context, index) {
+                final restaurants = snapshot.data!.restaurants![index];
+                return RestaurantCard(
+                  id: restaurants.id.toString(),
+                  pictureId:
+                      "https://restaurant-api.dicoding.dev/images/medium/${snapshot.data!.restaurants![index].pictureId}",
+                  name: restaurants.name.toString(),
+                  city: restaurants.city.toString(),
+                  rating: restaurants.rating.toString(),
+                  description: restaurants.description.toString(),
+                );
+              },
             );
           },
         ),

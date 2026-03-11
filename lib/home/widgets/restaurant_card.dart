@@ -46,8 +46,7 @@ class RestaurantCard extends StatelessWidget {
                 fit: BoxFit.fill,
                 placeholder: 'assets/images/placeholder.png',
                 placeholderFit: BoxFit.fill,
-                image:
-                    'https://blog.thewonderspace.com/wp-content/uploads/2025/06/Fast-Food-Restaurant-Restoran-Cepat-Saji-1024x683.jpg',
+                image: pictureId,
                 imageErrorBuilder: (context, error, stackTrace) {
                   return Image.asset(
                     'assets/images/image-error.png',
